@@ -24,7 +24,7 @@ int main(int argc, char** argv)
     Point pt1, pt2;
     vector<Vec2f>linesR;
     float resultLine[2];
-
+//
     for (;;) {
         //Mat frame;
         Mat thres, canny;
