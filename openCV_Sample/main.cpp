@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 
     if (!capture.isOpened())
         return -1;
-//
+
     cout << "Device opening..." << endl;
     namedWindow("File Play", WINDOW_AUTOSIZE);
     Mat frame;
