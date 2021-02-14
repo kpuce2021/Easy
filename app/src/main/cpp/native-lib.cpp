@@ -16,10 +16,10 @@ bool find_right(Mat *frame, vector<Vec2f> lines);
 void drawLines(Mat *frame, float rho, float theta);
 
 extern "C"
-JNIEXPORT void JNICALL
+JNIEXPORT int JNICALL
 Java_com_mobileprogramming_twelve_MainActivity_ConvertImage(JNIEnv *env, jobject thiz,
                                                             jlong mat_addr_input,
-                                                            jlong mat_addr_result) {
+                                                            jlong mat_addr_result, jint count) {
     Mat &matInput=*(Mat *)mat_addr_input;
     Mat &matResult=*(Mat *)mat_addr_result;
 //==================================================================================================
@@ -48,6 +48,14 @@ Java_com_mobileprogramming_twelve_MainActivity_ConvertImage(JNIEnv *env, jobject
     left_flag=find_left(&matInput, lines_left);
     right_flag=find_right(&matInput, lines_right);
 
+    if(left_flag==false&&right_flag==false){
+        count++;
+    }else{
+        count=0;
+    }
+
+    return count;
+
 }
 //====================================================================================
 bool find_left(Mat* frame, vector<Vec2f> lines){  //Min
@@ -61,7 +69,7 @@ bool find_left(Mat* frame, vector<Vec2f> lines){  //Min
             }
         }
         if(lines[minIndex][1]<1.1&&lines[minIndex][1]>0.8){
-            drawLines(frame, lines[minIndex][0], lines[minIndex][1]);
+            //drawLines(frame, lines[minIndex][0], lines[minIndex][1]);
             flag=true;  //flag true->1 라인 찾기 성공
         }
     }
@@ -80,7 +88,7 @@ bool find_right(Mat *frame, vector<Vec2f> lines){ //Max
         }
 
         if(lines[maxIndex][1]>2.1&&lines[maxIndex][1]<2.5){
-            drawLines(frame, lines[maxIndex][0], lines[maxIndex][1]);
+            //drawLines(frame, lines[maxIndex][0], lines[maxIndex][1]);
             flag=true;  //flag true->1 라인 찾기 성공
         }
     }
@@ -109,3 +117,14 @@ void drawLines(Mat* frame, float rho, float theta){
 }
 
 
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_mobileprogramming_twelve_MainActivity_alarmImage(JNIEnv *env, jobject thiz,
+                                                          jlong mat_addr_input,
+                                                          jlong mat_addr_result) {
+
+    Mat &matInput=*(Mat *)mat_addr_input;
+    cvtColor(matInput, matInput, COLOR_BGR2HLS);
+
+    // TODO: implement alarmImage()
+}

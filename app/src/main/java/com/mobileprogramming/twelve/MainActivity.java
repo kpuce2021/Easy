@@ -37,25 +37,15 @@ import static org.opencv.imgproc.Imgproc.HoughLines;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2{
-    Button btn;
 
+    int count=0;
 
-
-
-    public native void ConvertImage(long matAddrInput, long matAddrResult);
-
-
-    //private static final PI=3.141592;
+    public native int ConvertImage(long matAddrInput, long matAddrResult, int count);
+    public native void alarmImage(long matAddrInput, long matAddrResult);
     private static final String TAG = "opencv";
-
-
     private Mat matInput;
     private Mat matResult;
-
     private CameraBridgeViewBase mOpenCvCameraView;
-
-    //public native void ConvertRGBtoGray(long matAddrInput, long matAddrResult);
-    // jni 사용 안함 => 삭제
 
     static {
         System.loadLibrary("opencv_java4");
@@ -63,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     }
 
     //=============================================================================================================
-
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -80,13 +69,11 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         }
     };
     //=============================================================================================================
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btn=findViewById(R.id.btn_record);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -149,14 +136,15 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         Mat canny = new Mat(); // 원본 Mat canny;
         Mat Roi1, Roi2, Roi;
 
-
         if ( matResult == null ) {
             matResult = new Mat(matInput.rows(), matInput.cols(), matInput.type());
         }
+        count=ConvertImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr(), count);  // native-lib
 
-        ConvertImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr());  // native-lib
-
-        btn.setText(matInput.cols()+" "+matInput.rows());
+        if(count>25){
+            alarmImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr());  // native-lib
+        }
+        // btn 위치
 
 //        int roi_x=50;   // pixel 따라 다름 수정필요
 //        int roi_y=2*(matInput.rows()/3);  // 하단 1/3 만 연산위해 영역 지정
@@ -209,7 +197,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
-
 
     @TargetApi(Build.VERSION_CODES.M)
     private void showDialogForPermission(String msg) {
