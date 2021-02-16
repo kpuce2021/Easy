@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         }
         count=ConvertImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr(), count);  // native-lib
 
-        if(count>25){
+        if(count>18){
             alarmImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr());  // native-lib
         }
         // btn 위치

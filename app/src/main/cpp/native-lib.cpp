@@ -39,8 +39,8 @@ Java_com_mobileprogramming_twelve_MainActivity_ConvertImage(JNIEnv *env, jobject
     Canny(matResult, canny, 85, 110, 3);
     frame=canny;
 
-    roi_left=canny(Rect(1*frame.cols/10, 3*frame.rows/5, 4*frame.cols/10, 2*frame.rows/5));
-    roi_right=canny(Rect(5*frame.cols/10, 3*frame.rows/5, 4*frame.cols/10, 2*frame.rows/5));
+    roi_left=canny(Rect(2*frame.cols/10, 3*frame.rows/5, 3*frame.cols/10, 2*frame.rows/5));
+    roi_right=canny(Rect(5*frame.cols/10, 3*frame.rows/5, 3*frame.cols/10, 2*frame.rows/5));
 
     HoughLines(roi_left, lines_left, 3, PI / 180, 200);
     HoughLines(roi_right,lines_right, 3, PI / 180, 200);
@@ -69,7 +69,7 @@ bool find_left(Mat* frame, vector<Vec2f> lines){  //Min
             }
         }
         if(lines[minIndex][1]<1.1&&lines[minIndex][1]>0.8){
-            //drawLines(frame, lines[minIndex][0], lines[minIndex][1]);
+            drawLines(frame, lines[minIndex][0], lines[minIndex][1]);
             flag=true;  //flag true->1 라인 찾기 성공
         }
     }
@@ -88,7 +88,7 @@ bool find_right(Mat *frame, vector<Vec2f> lines){ //Max
         }
 
         if(lines[maxIndex][1]>2.1&&lines[maxIndex][1]<2.5){
-            //drawLines(frame, lines[maxIndex][0], lines[maxIndex][1]);
+            drawLines(frame, lines[maxIndex][0], lines[maxIndex][1]);
             flag=true;  //flag true->1 라인 찾기 성공
         }
     }
@@ -100,9 +100,9 @@ void drawLines(Mat* frame, float rho, float theta){
     if(theta>0.8&&theta<1.1){   //left Line
         Point pt1(rho / cos(theta), 0);
         Point pt2((rho - temp.rows*sin(theta)) / cos(theta), temp.rows);
-        pt1.x=pt1.x+1*temp.cols/10;
+        pt1.x=pt1.x+2*temp.cols/10;
         pt1.y = pt1.y + 3 * temp.rows / 5;
-        pt2.x=pt2.x+1*temp.cols/10;
+        pt2.x=pt2.x+2*temp.cols/10;
         pt2.y = pt2.y + 3 * temp.rows / 5;
         line(*frame, pt1, pt2, Scalar(255, 0, 0), 5);
     }else if(theta>2.0&&theta<2.5){
@@ -115,7 +115,6 @@ void drawLines(Mat* frame, float rho, float theta){
         line(*frame, pt1, pt2, Scalar(255, 0, 0), 5);
     }
 }
-
 
 extern "C"
 JNIEXPORT void JNICALL
