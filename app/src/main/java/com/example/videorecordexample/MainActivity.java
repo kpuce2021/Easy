@@ -1,3 +1,11 @@
+/*
+ camera2 api 변경 예정
+ opencv camera 녹화 구현 예정
+ */
+
+
+
+
 package com.example.videorecordexample;
 
 import androidx.annotation.NonNull;
