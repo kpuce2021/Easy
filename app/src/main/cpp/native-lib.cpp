@@ -16,6 +16,8 @@ bool find_left(Mat *frame, vector<Vec2f> lines);
 bool find_right(Mat *frame, vector<Vec2f> lines);
 void drawLines(Mat *frame, float rho, float theta);
 
+
+
 extern "C"
 JNIEXPORT int JNICALL
 Java_com_mobileprogramming_twelve_MainActivity_ConvertImage(JNIEnv *env, jobject thiz,
@@ -127,10 +129,6 @@ Java_com_mobileprogramming_twelve_MainActivity_alarmImage(JNIEnv *env, jobject t
 
     // TODO: implement alarmImage()
 }
-
-
-
-
 //JNIEXPORT jlong JNICALL
 
 extern "C"
@@ -176,3 +174,6 @@ Java_com_mobileprogramming_twelve_MainActivity_detect(JNIEnv *env, jobject thiz,
         }
     }
 }
+
+
+//========================================================================================================

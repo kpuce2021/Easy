@@ -7,17 +7,23 @@ import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.media.MediaMuxer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.mobileprogramming.twelve.R;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
@@ -26,14 +32,19 @@ import org.opencv.core.Point;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.videoio.VideoWriter;
 
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -43,10 +54,38 @@ import static org.opencv.imgproc.Imgproc.GaussianBlur;
 import static org.opencv.imgproc.Imgproc.HoughLines;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
+
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2{
 
-    int count=0;
+    //variable display
+    private Button btn_changeDisplay1; // 해상도 변경을 위한 버튼 변수
+    private Button btn_changeDisplay2;
+    private Button btn_changeDisplay3;
+    private Button btn_changeDisplay4;
+    private Button btn_changeDisplay5;
+    private Button btn_10sec;   // 10 초간격으로 record 테스트를 위한 버튼
 
+    //variabe path
+    String baseDir=null;    //path for car.xml
+    String pathDir=null;
+    String baseDir_Recorder=null;   // 내부 저장소 경로
+    String pathDir_Recorder=null;   // 내부 저장소 중 녹화파일 을 저장할 경로
+
+    //variable VideoWriter
+    int count=0;
+    private Button btn_record;  // 비디오 record 시작 버튼
+    boolean record_flag=false;  //recodring 시작 포인트를 위한 flag
+    VideoWriter videoWriter;
+    boolean onRecording=false;  // recording 중인지 확인하기 위한 flag
+    private int recordCount=0;
+
+    //variable Date
+    private long now;
+    private Date date;
+    private SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"); //햔재 날짜, 시간 포맷 설정
+    private String time;    // 녹화 시작 시점의 시간을 저장하기위한 변수
+
+    //variable lane&car detection
     public native int ConvertImage(long matAddrInput, long matAddrResult, int count);   // 차선 검출 수행
     public native void alarmImage(long matAddrInput, long matAddrResult);   // 이벤트 발생 시점 시각화
     public native long loadCascade(String cascadeFileName);     // 스마트폰 내부 저장소에 저장한 cars.xml 파일의 경로 리턴
@@ -64,9 +103,9 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     }
 
     //=============================================================================================================
-    private void copyFile(String filename) {
-        String baseDir = Environment.getExternalStorageDirectory().getPath();   // 기본 저장 경로
-        String pathDir = baseDir + File.separator + filename;   // 기본 저장 경로 + cars.xml 파일의 경로
+    private void copyFile(String filename) {    //car.xml 을 내부 저장소에 copy
+        baseDir = Environment.getExternalStorageDirectory().getPath();   // 기본 저장 경로
+        pathDir = baseDir + File.separator + filename;   // 기본 저장 경로 + cars.xml 파일의 경로
 
         AssetManager assetManager = this.getAssets();   // asset folder내 cars.xml 파일 접근 하기 위한 assetmanager
 
@@ -131,13 +170,93 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        //setContentView(R.layout.activity_main);
-
         mOpenCvCameraView = findViewById(R.id.activity_surface_view);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.setCameraIndex(0); // front-camera(1),  back-camera(0)
+        //mOpenCvCameraView.setMaxFrameSize(320,280);
+        //mOpenCvCameraView.setMaxFrameSize(480,320);
+        //mOpenCvCameraView.setMaxFrameSize(640,480);
+        //mOpenCvCameraView.setMaxFrameSize(800,600);
+        //mOpenCvCameraView.setMaxFrameSize(1280,720);  //뷰 객체를 다시 시작해야 함에 주의 mOpenCvCameraView.disableView() 하고 나서 enableView()수행
+        // 그리고 나서 resolutionChange.dismiss();
 
+        btn_10sec=(Button)findViewById(R.id.btn_10sec);         //녹화 주기 10초로 설정
+        btn_10sec.setOnClickListener(new Button.OnClickListener(){  //녹화 주기 설정 예정
+            public void onClick(View v){
+
+            }
+        });
+
+
+        btn_changeDisplay1=(Button)findViewById(R.id.btn_changeDisplay1);
+        btn_changeDisplay1.setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View v){
+                mOpenCvCameraView.setMaxFrameSize(320,280);
+                mOpenCvCameraView.disableView();
+                mOpenCvCameraView.enableView();
+            }
+        });
+        btn_changeDisplay2=(Button)findViewById(R.id.btn_changeDisplay2);
+        btn_changeDisplay2.setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View v){
+                mOpenCvCameraView.setMaxFrameSize(480,320);
+                mOpenCvCameraView.disableView();
+                mOpenCvCameraView.enableView();
+            }
+        });
+        btn_changeDisplay3=(Button)findViewById(R.id.btn_changeDisplay3);
+        btn_changeDisplay3.setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View v){
+                mOpenCvCameraView.setMaxFrameSize(640,480);
+                mOpenCvCameraView.disableView();
+                mOpenCvCameraView.enableView();
+            }
+        });
+        btn_changeDisplay4=(Button)findViewById(R.id.btn_changeDisplay4);
+        btn_changeDisplay4.setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View v){
+                mOpenCvCameraView.setMaxFrameSize(800,600);
+                mOpenCvCameraView.disableView();
+                mOpenCvCameraView.enableView();
+            }
+        });
+        btn_changeDisplay5=(Button)findViewById(R.id.btn_changeDisplay5);
+        btn_changeDisplay5.setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View v){
+                mOpenCvCameraView.setMaxFrameSize(1280,780);
+                mOpenCvCameraView.disableView();
+                mOpenCvCameraView.enableView();
+            }
+        });
+
+        btn_record=(Button)findViewById(R.id.btnRecord);
+        btn_record.setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View v){
+
+                if(record_flag==true){ // 녹화 종료
+                    //녹화 메서드
+                    btn_record.setText("녹화시작");
+                    videoWriter.release();  //video write종료 -> 녹화파일에 .avi영상 저장
+
+                    record_flag=false;
+                }else{   //녹화 시작
+                    //녹화 메서드
+                    btn_record.setText("녹화종료");
+                    record_flag=true;
+                    onRecording=false;
+
+                }
+            }
+        });
+    }
+    //=============================================================================================================
+    public String getTime(){    //현재 시간을 문자열로 리턴하는 메서드
+        String current=null;
+        now=System.currentTimeMillis();
+        date=new Date(now);
+        current=sdf.format(date);
+        return current;
     }
     //=============================================================================================================
 
@@ -147,8 +266,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
     }
-
-
+    //=============================================================================================================
     @Override
     public void onResume()
     {
@@ -162,14 +280,13 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
     }
-
+    //=============================================================================================================
     public void onDestroy() {
         super.onDestroy();
-
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
-    }
 
+    }
     //=============================================================================================================
     @Override
     public void onCameraViewStarted(int width, int height) {
@@ -182,21 +299,48 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {   // 프레임 단위 영상처리 수행
         matInput = inputFrame.rgba();
-        Mat canny = new Mat(); // 원본 Mat canny;
-        Mat Roi1, Roi2, Roi;
 
-        if ( matResult == null ) {
-            matResult = new Mat(matInput.rows(), matInput.cols(), matInput.type()); // 연산 최소화를 위한 영역 지정
+        if(record_flag==true) { //record 시작 포인트 및 녹화중 상태
+
+
+            int w=matInput.cols();
+            int h=matInput.rows();
+            if(onRecording==false){ //녹화 시작 포인트에만 해당
+                time=getTime();
+                baseDir_Recorder = Environment.getExternalStorageDirectory().getPath();   // 기본 저장 경로
+                pathDir_Recorder = baseDir_Recorder + File.separator+"/녹화영상/"+getTime()+ ".avi";
+                /*
+                File file=new File(Environment.getExternalStorageDirectory().getPath()+File.separator+"/녹화영상");
+                file.mkdirs();
+                 */
+
+                //voideoWriter를 통해 avi영상을 저장하기 위해 writer set
+                // android opencv 의 경우 avi외에 포맷을 지원하지 않
+                videoWriter=new VideoWriter(pathDir_Recorder, VideoWriter.fourcc('M','J','P','G'),20,new Size(w,h), true);
+                videoWriter.open(pathDir_Recorder, VideoWriter.fourcc('M','J','P','G'),20,new Size(w,h), true);
+                onRecording=true;
+            }
+
+            if(!videoWriter.isOpened()){
+                finish();
+            }
+
+            videoWriter.write(matInput); // video writer 수행
+
+            Mat canny = new Mat(); // 원본 Mat canny;
+            Mat Roi1, Roi2, Roi;
+
+            if (matResult == null) {
+                matResult = new Mat(matInput.rows(), matInput.cols(), matInput.type()); // 연산 최소화를 위한 영역 지정
+            }
+            count = ConvertImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr(), count);   // 차선 검출 메서드 호출 native-lib 구현
+
+            if (count > 18) {
+                alarmImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr());  // 이벤트 발생 시점->화면전환
+            }
+            detect(cascadeClassifier_car, matInput.getNativeObjAddr(), matResult.getNativeObjAddr()); // cars.xml 기반 차량 검출 메서드 호출
         }
-        count=ConvertImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr(), count);   // 차선 검출 메서드 호출 native-lib 구현
-
-        if(count>18){
-            alarmImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr());  // 이벤트 발생 시점->화면전환
-        }
-
-        detect(cascadeClassifier_car, matInput.getNativeObjAddr(), matResult.getNativeObjAddr()); // cars.xml 기반 차량 검출 메서드 호출
         return matInput;
-
     }
     //=============================================================================================================
     protected List<? extends CameraBridgeViewBase> getCameraViewList() {
@@ -212,8 +356,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         }
         for (CameraBridgeViewBase cameraBridgeViewBase: cameraViews) {
             if (cameraBridgeViewBase != null) {
-                 //cameraBridgeViewBase.setCameraPermissionGranted();
-
+                //cameraBridgeViewBase.setCameraPermissionGranted();
                 read_cascade_file();
             }
         }
@@ -233,7 +376,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             onCameraPermissionGranted();
         }
     }
-
     @Override
     @TargetApi(Build.VERSION_CODES.M)
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -267,7 +409,4 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     }
 
 }
-
-
-
 

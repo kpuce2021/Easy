@@ -7,6 +7,10 @@ import org.opencv.R;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
+import android.media.MediaRecorder;  //delete
+
+
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -19,6 +23,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.Surface;
+
+
+
 
 /**
  * This is a basic class, implementing the interaction with Camera and OpenCV library.
@@ -55,6 +63,25 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
     public static final int CAMERA_ID_FRONT = 98;
     public static final int RGBA = 1;
     public static final int GRAY = 2;
+
+    protected MediaRecorder mRecorder;  //delete
+    protected Surface mSurface=null; //delete
+
+    //delete
+
+    public void setRecorder(MediaRecorder rec){
+        mRecorder=rec;
+        if(mRecorder!=null){
+            mSurface=mRecorder.getSurface();
+        }
+    }
+
+
+
+
+
+//delete
+
 
     public CameraBridgeViewBase(Context context, int cameraId) {
         super(context);
@@ -431,6 +458,8 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
                     mFpsMeter.measure();
                     mFpsMeter.draw(canvas, 20, 30);
                 }
+
+
                 getHolder().unlockCanvasAndPost(canvas);
             }
         }

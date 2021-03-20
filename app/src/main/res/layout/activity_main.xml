@@ -8,15 +8,57 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/btnRecord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Record"
+        />
+    <Button
+        android:id="@+id/btn_changeDisplay1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="320,280"/>
+    <Button
+        android:id="@+id/btn_changeDisplay2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="480,320"/>
+    <Button
+        android:id="@+id/btn_changeDisplay3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="640,480"/>
+    <Button
+        android:id="@+id/btn_changeDisplay4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="800,600"/>
+    <Button
+        android:id="@+id/btn_changeDisplay5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1280,780"/>
+    <Button
+        android:id="@+id/btn_10sec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10Sec"/>
+
+
+</LinearLayout>
 
 
 
     <org.opencv.android.JavaCameraView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        opencv:camera_id="any"
         android:visibility="gone"
         android:id="@+id/activity_surface_view" />
-
 
 </LinearLayout>
