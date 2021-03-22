@@ -3,6 +3,9 @@ package com.mobileprogramming.twelve;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -56,6 +59,13 @@ import static org.opencv.imgproc.Imgproc.cvtColor;
 
 
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2{
+
+
+    //variable timer
+    TextView txt_timer;
+    Timer timer;
+    int periodOfTimer=5000; // 현재 타이머 간격 5 초
+
 
     //variable display
     private Button btn_changeDisplay1; // 해상도 변경을 위한 버튼 변수
@@ -181,12 +191,10 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         //mOpenCvCameraView.setMaxFrameSize(1280,720);  //뷰 객체를 다시 시작해야 함에 주의 mOpenCvCameraView.disableView() 하고 나서 enableView()수행
         // 그리고 나서 resolutionChange.dismiss();
 
-        btn_10sec=(Button)findViewById(R.id.btn_10sec);         //녹화 주기 10초로 설정
-        btn_10sec.setOnClickListener(new Button.OnClickListener(){  //녹화 주기 설정 예정
-            public void onClick(View v){
+        txt_timer=(TextView)findViewById(R.id.txt_timer);
 
-            }
-        });
+
+
 
 
         btn_changeDisplay1=(Button)findViewById(R.id.btn_changeDisplay1);
@@ -234,23 +242,41 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         btn_record.setOnClickListener(new Button.OnClickListener(){
             public void onClick(View v){
 
-                if(record_flag==true){ // 녹화 종료
+                if(record_flag==true){ // 녹화 종료하기
                     //녹화 메서드
                     btn_record.setText("녹화시작");
                     videoWriter.release();  //video write종료 -> 녹화파일에 .avi영상 저장
-
                     record_flag=false;
-                }else{   //녹화 시작
+                    timer.cancel();
+                }else{   //녹화 시작하기
                     //녹화 메서드
                     btn_record.setText("녹화종료");
                     record_flag=true;
                     onRecording=false;
 
+                    TimerTask timerTask=new TimerTask(){
+                        public void run(){
+
+                            if(onRecording==true){
+                            videoWriter.release();
+                            onRecording=false;
+                            }
+                        }
+                    };
+                    timer=new Timer();
+                    timer.schedule(timerTask,0,periodOfTimer);
                 }
             }
         });
+
     }
     //=============================================================================================================
+
+
+
+
+    //=============================================================================================================
+
     public String getTime(){    //현재 시간을 문자열로 리턴하는 메서드
         String current=null;
         now=System.currentTimeMillis();
@@ -299,6 +325,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {   // 프레임 단위 영상처리 수행
         matInput = inputFrame.rgba();
+
+
 
         if(record_flag==true) { //record 시작 포인트 및 녹화중 상태
 

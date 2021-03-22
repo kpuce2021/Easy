@@ -63,5 +63,4 @@ public class VideoAdapter extends BaseAdapter {  //BaseAdapter 추상 클래스 
         return view;
 
     }
-
 }
