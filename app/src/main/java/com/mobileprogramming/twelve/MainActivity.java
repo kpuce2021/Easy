@@ -10,7 +10,12 @@ import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.media.AudioManager;
 import android.media.MediaMuxer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.media.ToneGenerator;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -60,6 +65,11 @@ import static org.opencv.imgproc.Imgproc.cvtColor;
 
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2{
 
+    //variable RingThone
+
+    int durationOfAlarm=100;    //ms단위
+    ToneGenerator tone=new ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME);
+    //tone.startTone(ToneGenerator.TONE_CDMA_PIP, 100);   //알림 플레이 메서드
 
     //variable timer
     TextView txt_timer;
@@ -196,13 +206,14 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
 
 
-
         btn_changeDisplay1=(Button)findViewById(R.id.btn_changeDisplay1);
         btn_changeDisplay1.setOnClickListener(new Button.OnClickListener(){
             public void onClick(View v){
                 mOpenCvCameraView.setMaxFrameSize(320,280);
                 mOpenCvCameraView.disableView();
                 mOpenCvCameraView.enableView();
+
+                tone.startTone(ToneGenerator.TONE_CDMA_PIP, 100);   //버튼 클릭시 알림
             }
         });
         btn_changeDisplay2=(Button)findViewById(R.id.btn_changeDisplay2);
