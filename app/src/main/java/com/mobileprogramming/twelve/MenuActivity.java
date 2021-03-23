@@ -42,6 +42,7 @@ public class MenuActivity extends AppCompatActivity {
 
         Uri uri=Uri.parse(Environment.getExternalStorageDirectory().getPath()+"/녹화영상/");
 
+
         intent_camera=new Intent(this, MainActivity.class);
         intent_gall=new Intent(this, VideoActivity.class);
 
