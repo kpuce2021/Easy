@@ -33,9 +33,12 @@ public class VideoActivity extends AppCompatActivity {
         File directory=new File(path);
         files=directory.listFiles();    // path의 위치에 있는 파일들 files배열 변수에 저장
 
+
         array_video=new ArrayList<Video>();
         for(int i=0; i<files.length; i++){
-            array_video.add(new Video(files[i].getName(), files[i].getPath())); //array_video에 파일내 모든 영상 저장
+            long size;
+            size=files[i].length();
+            array_video.add(new Video(files[i].getName(), files[i].getPath(), size)); //array_video에 파일내 모든 영상 저장
         }
 
         VideoAdapter videoAdapter=new VideoAdapter(this, array_video);  //Adapter생성하여 현재 context와 array_video전달

@@ -40,6 +40,7 @@ public class MenuActivity extends AppCompatActivity {
             file.mkdirs();  // 영상 저장을 위한 폴더를 생성
         }
 
+
         Uri uri=Uri.parse(Environment.getExternalStorageDirectory().getPath()+"/녹화영상/");
 
 

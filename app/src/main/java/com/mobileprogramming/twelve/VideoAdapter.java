@@ -53,7 +53,7 @@ public class VideoAdapter extends BaseAdapter {  //BaseAdapter 추상 클래스 
         intent=new Intent(context, playActivity.class);
 
         Button button=(Button)view.findViewById(R.id.btn_item);
-        button.setText(arrayVideo.get(position).getTitle());
+        button.setText(arrayVideo.get(position).getTitle()+"("+arrayVideo.get(position).getSizeToString()+"Mbyte)");
         button.setOnClickListener(new Button.OnClickListener(){
             public void onClick(View v){    //특정 item 클릭시 해당 영상의 정보를 intent를 통해 playActivity로 전달
                 intent.putExtra("videoTitle", arrayVideo.get(position).getTitle());
