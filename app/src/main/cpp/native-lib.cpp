@@ -155,24 +155,43 @@ Java_com_mobileprogramming_twelve_MainActivity_loadCascade(JNIEnv *env, jobject 
 }
 
 extern "C"
-JNIEXPORT void JNICALL
+JNIEXPORT int JNICALL
 Java_com_mobileprogramming_twelve_MainActivity_detect(JNIEnv *env, jobject thiz,
                                                       jlong cascade_classifier_car,
-                                                      jlong mat_addr_input, jlong mat_addr_result) {
+                                                      jlong mat_addr_input, jlong mat_addr_result, jint flag) {
 
+    int tmpIndex;
+    int resIndex=0;
     Mat &img_input = *(Mat *) mat_addr_input;   //input frame
     Mat &img_result = *(Mat *) mat_addr_result; //output frame
+
+
+
+    Mat detect_frame=img_input(Rect(3*img_input.cols/10, 0, 4*img_input.cols/10, img_input.rows));
+    int standard=detect_frame.cols/2;
+
 
     std::vector<Rect> cars;     //검출된 차량의 정보를 저장할 벡터 자료형
 
     //((CascadeClassifier *) cascade_classifier_car)->detectMultiScale( img_resize, cars, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
-    ((CascadeClassifier *) cascade_classifier_car)->detectMultiScale(img_input, cars);  // 차량 검출 수행 -> 결과 cars벡터에 저장
+    ((CascadeClassifier *) cascade_classifier_car)->detectMultiScale(detect_frame, cars);  // 차량 검출 수행 -> 결과 cars벡터에 저장
 
     if(!cars.empty()){
         for(int i=0; i<cars.size(); i++){
-            rectangle(img_input, cars[i], Scalar(255,0,255),2);
+            tmpIndex=i;
+            if(abs(standard-cars[resIndex].x+cars[resIndex].width/2)>abs(standard-cars[tmpIndex].x+cars[tmpIndex].width/2)){
+                resIndex=tmpIndex;
+            }
         }
+        cars[resIndex].x=cars[resIndex].x+3*img_input.cols/10;
+        rectangle(img_input,cars[resIndex], Scalar(255,0,255),2);
+
+        flag=1;  //true
     }
+
+
+    return flag;
+
 }
 
 

@@ -2,7 +2,6 @@
 로그인 회원 가입 화면 다음 화면
 1. camera로 이동 버튼
 2. 저장된 영상으로 이동하기 위한 버튼
-
  */
 
 package com.mobileprogramming.twelve;

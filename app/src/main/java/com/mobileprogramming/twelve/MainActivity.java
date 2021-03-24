@@ -52,6 +52,7 @@ import org.opencv.core.Point;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.features2d.FastFeatureDetector;
 import org.opencv.videoio.VideoWriter;
 
 
@@ -79,6 +80,11 @@ import static org.opencv.imgproc.Imgproc.putText;
 
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2, SensorEventListener {
 
+    //variable detect&tracker
+    private int count_detect=0;
+    private int detection_flag=0; //0 =false
+    private Rect car;
+
     //variable GPS
     private GpsTracker gpsTracker;  //현재 위치 정보를 저장할 객체
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
@@ -94,17 +100,14 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private float last_x, last_y, last_z;
     private int COLLISION_THRESHOLD=5000;   //충돌 임계값 -> 값이 낮을 수록 작은 충돌에도 이벤트 발생
 
-
     //variable RingThone
     int durationOfAlarm=100;    //알림 소리 길이 -> 현재 100ms
     ToneGenerator tone=new ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME);
-
 
     //variable timer
     TextView txt_timer;
     Timer timer;
     int periodOfTimer=20000; // 타이머 간격 ms단위 -> 현재 타이머 간격 5 초
-
 
     //variable display
     private Button btn_changeDisplay1; // 해상도 변경을 위한 버튼 변수
@@ -121,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     String pathDir_Recorder=null;   // 내부 저장소 중 녹화파일 을 저장할 경로
 
     //variable VideoWriter
-    int count=0;
+    int count=0;    //차선 이탈방지 프레임 count
     private Button btn_record;  // 비디오 record 시작 버튼
     boolean record_flag=false;  //recodring 시작 포인트를 위한 flag
     VideoWriter videoWriter;
@@ -134,11 +137,13 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"); //햔재 날짜, 시간 포맷 설정
     private String time;    // 녹화 시작 시점의 시간을 저장하기위한 변수
 
-    //variable lane&car detection
+    //native method
     public native int ConvertImage(long matAddrInput, long matAddrResult, int count);   // 차선 검출 수행
     public native void alarmImage(long matAddrInput, long matAddrResult);   // 이벤트 발생 시점 시각화
     public native long loadCascade(String cascadeFileName);     // 스마트폰 내부 저장소에 저장한 cars.xml 파일의 경로 리턴
-    public native void detect(long cascadeClassifier_car, long matAddrInput, long matAddrResult);   // asset folder 내 cars.xml파일 기반 객체 검출 수행 및 frame위에 표시
+    public native int detect(long cascadeClassifier_car, long matAddrInput, long matAddrResult, int flag);   // asset folder 내 cars.xml파일 기반 객체 검출 수행 및 frame위에 표시
+    //public native void init_mat(long matAddrInput);     //detection을 수행할 mat 를 초기화 하기위한 메서드
+        //문제 발생시 detect method의 Rect car delete
 
     private static final String TAG = "opencv";
     private Mat matInput;
@@ -156,7 +161,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         //permission - gps
         if (!checkLocationServicesStatus()) {
@@ -240,6 +244,11 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                     videoWriter.release();  //video write종료 -> 녹화파일에 .avi영상 저장
                     record_flag=false;
                     timer.cancel();
+
+
+
+
+
                 }else{   //녹화 시작하기
                     //녹화 메서드
                     gpsTracker=new GpsTracker(MainActivity.this);   //gpsTracker 객체 생성
@@ -266,7 +275,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 }
             }
         });
-
     }
     //=============================================================================================================
     private void showDialogForLocationServiceSetting() {
@@ -482,10 +490,12 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     }
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {   // 프레임 단위 영상처리 수행
+
         matInput = inputFrame.rgba();
 
-        if(record_flag==true) { //record 시작 포인트 및 녹화중 상태
 
+
+        if(record_flag==true) { //record 시작 포인트 및 녹화중 상태
 
             int w=matInput.cols();
             int h=matInput.rows();
@@ -523,11 +533,25 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             count = ConvertImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr(), count);   // 차선 검출 메서드 호출 native-lib 구현
 
             if (count > 18) {
-                tone.startTone(ToneGenerator.TONE_CDMA_PIP, durationOfAlarm);   //차선 이탈 알림
+                tone.startTone(ToneGenerator.TONE_CDMA_PIP, durationOfAlarm);   //차선 이탈 알림 //tone 주석 지울것
                 //alarmImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr());  // 이벤트 발생 시점->화면전환
             }
-            detect(cascadeClassifier_car, matInput.getNativeObjAddr(), matResult.getNativeObjAddr()); // cars.xml 기반 차량 검출 메서드 호출
-        }
+            count_detect++; //count_detect =30 false
+            if(count_detect==30){
+                detection_flag=0;
+                count_detect=0;
+            }
+            //check point01
+            detection_flag=detect(cascadeClassifier_car, matInput.getNativeObjAddr(), matResult.getNativeObjAddr(), detection_flag); // cars.xml 기반 차량 검출 메서드 호출
+            //  count_detect++ -> 30프레임당 한번씩 0 으로 초기화 하며 해당 변수가 30 이 되면 detection_flag를 0으로 설정하여 detection을 다시 수행하도록 설정한다.
+            //detection_flag=0 -> detection수행 후 empty가 아니면 tracker init -> detection_flag=1
+            // detection_flag=1 -> tracker update 후 tracker의 결과가 범위를 벗어나면 detection_flag=0 저장
+
+
+
+
+
+        }// recording 중 동작부
 
         return matInput;
     }
@@ -618,7 +642,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 if (collision_detect > COLLISION_THRESHOLD) {
                     //지정된 수치이상 흔들림이 있으면 실행
                     tone.startTone(ToneGenerator.TONE_CDMA_PIP, durationOfAlarm);   //버튼 클릭시 알림
-
                 } else {
 
                 }
@@ -631,7 +654,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     }
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
     }
 }
 

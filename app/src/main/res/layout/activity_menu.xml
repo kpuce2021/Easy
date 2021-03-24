@@ -11,12 +11,12 @@
         android:id="@+id/btn_camera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="go To Camera"/>
+        android:text="Camera"/>
 
     <Button
         android:id="@+id/btn_gall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="go To Folder"/>
+        android:text="Folder"/>
 
 </LinearLayout>

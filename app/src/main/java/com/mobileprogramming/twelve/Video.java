@@ -27,10 +27,13 @@ public class Video {
     public long getSizeToLong(){    //byte 크기
         return this.size_byte;
     }
-    public String getSizeToString(){
-
+    public String getSizeToString_Mbyte(){
         size_Mbyte=size_byte/(1024*1024);
         return Long.toString(size_Mbyte);
+    }
+    public String getSizeToString_byte(){
+        return Long.toString(size_byte);
+
     }
 
 }
