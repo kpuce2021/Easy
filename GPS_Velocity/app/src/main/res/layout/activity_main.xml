@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:columnCount="2"
+    tools:context=".MainActivity">
+
+
+    <TextView
+        android:id="@+id/tvGpsEnableLabel"
+        android:layout_gravity="right"
+        android:textSize="25dp"
+        android:text="GPS Enable "
+        />
+    <TextView
+        android:id="@+id/tvGpsEnable"
+        android:text=":"
+        android:textSize="25dp"
+        />
+
+    <TextView
+        android:id="@+id/tvGetSpeedLabel"
+        android:layout_gravity="right"
+        android:textSize="25dp"
+        android:text="Get Speed "
+        />
+    <TextView
+        android:id="@+id/tvGetSpeed"
+        android:text=":"
+        android:textSize="25dp"
+        />
+
+    <TextView
+        android:id="@+id/tvCalSpeedLabel"
+        android:layout_gravity="right"
+        android:textSize="25dp"
+        android:text="Cal Speed "
+        />
+    <TextView
+        android:id="@+id/tvCalSpeed"
+        android:text=":"
+        android:textSize="25dp"
+        />
+
+    <TextView
+        android:id="@+id/tvTimeLabel"
+        android:layout_gravity="right"
+        android:textSize="25dp"
+        android:text="Time "
+        />
+    <TextView
+        android:id="@+id/tvTime"
+        android:text=":"
+        android:textSize="25dp"
+        />
+
+    <TextView
+        android:id="@+id/tvLastTimeLabel"
+        android:layout_gravity="right"
+        android:textSize="25dp"
+        android:text="Last Time "
+        />
+    <TextView
+        android:id="@+id/tvLastTime"
+        android:text=":"
+        android:textSize="25dp"
+        />
+
+    <TextView
+        android:id="@+id/tvTimeDifLabel"
+        android:layout_gravity="right"
+        android:textSize="25dp"
+        android:text="시간 간격 "
+        />
+    <TextView
+        android:id="@+id/tvTimeDif"
+        android:text=":"
+        android:textSize="25dp"
+        />
+
+    <TextView
+        android:id="@+id/tvDistDifLabel"
+        android:layout_gravity="right"
+        android:textSize="25dp"
+        android:text="거리 간격 "
+        />
+    <TextView
+        android:id="@+id/tvDistDif"
+        android:text=":"
+        android:textSize="25dp"
+        />
+
+
+
+</GridLayout>
