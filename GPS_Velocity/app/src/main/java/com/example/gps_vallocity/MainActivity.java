@@ -1,5 +1,8 @@
 package com.example.gps_vallocity;
 
+// latitude , longitude, accuracy , altitude 추가
+// Geocoding -> latitude , longitude => 지명으로 출력 예정
+
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -22,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     private LocationManager locationManager;
     private Location mLastLocation = null;
-    private TextView tvGetSpeed, tvCalSpeed , tvTime , tvLastTime , tvGpsEnable , tvTimeDif,tvDistDif;
+    private TextView tvGetSpeed, tvCalSpeed , tvTime , tvLastTime , tvGpsEnable , tvTimeDif,tvDistDif, tvLongitude, tvLatitude, tvAccuracy, tvAltitude;
     private double speed;
 
 //=================================================================================================
@@ -38,7 +41,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         tvGpsEnable = (TextView)findViewById(R.id.tvGpsEnable);
         tvTimeDif = (TextView)findViewById(R.id.tvTimeDif);
         tvDistDif = (TextView)findViewById(R.id.tvDistDif);
-//=================================================================================================
+
+        tvLongitude = (TextView)findViewById(R.id.tvLongitude); // 경도
+        tvLatitude = (TextView)findViewById(R.id.tvLatitude); // 위도
+        tvAccuracy = (TextView)findViewById(R.id.tvAccuracy); // 신뢰도도
+        tvAltitude = (TextView)findViewById(R.id.tvAltitude); // 고도
+//================================================================================================
 
         /*퍼미션 체크 ActivityCompat.checkSelfPermission(Context, String)
         퍼미션 요청 ActivityCompat.requestPermissions(Activity, String[], int)
@@ -143,6 +151,18 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
         //현재 위치를 마지막 위치로 변경
         mLastLocation = location;
+
+        double longtide = location.getLongitude(); // 경도
+        double latitude = location.getLatitude(); // 위도
+        float accuracy = location.getAccuracy(); // 신뢰도
+        double altitude = location.getAltitude();// 고도
+
+
+        tvLongitude.setText(": " + longtide);
+        tvLatitude.setText(": " + latitude);
+        tvAccuracy.setText(": " + accuracy+"m");
+        tvAltitude.setText(": "+ altitude + "m");
+
     }
 //=================================================================================================
     //LocationLisetner 에 대한 Override

@@ -5,95 +5,152 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center"
+    android:layout_gravity="center_vertical"
     android:columnCount="2"
+    android:padding="30dp"
     tools:context=".MainActivity">
 
 
     <TextView
         android:id="@+id/tvGpsEnableLabel"
-        android:layout_gravity="right"
-        android:textSize="25dp"
+        android:layout_gravity="center_vertical"
+        android:textSize="20dp"
+        android:layout_marginBottom="20dp"
+
         android:text="GPS Enable "
         />
     <TextView
         android:id="@+id/tvGpsEnable"
         android:text=":"
-        android:textSize="25dp"
+        android:textSize="20dp"
         />
 
     <TextView
         android:id="@+id/tvGetSpeedLabel"
         android:layout_gravity="right"
-        android:textSize="25dp"
+        android:textSize="20dp"
+        android:layout_marginBottom="20dp"
         android:text="Get Speed "
         />
     <TextView
         android:id="@+id/tvGetSpeed"
         android:text=":"
-        android:textSize="25dp"
+        android:textSize="20dp"
         />
 
     <TextView
         android:id="@+id/tvCalSpeedLabel"
         android:layout_gravity="right"
-        android:textSize="25dp"
+        android:textSize="20dp"
+        android:layout_marginBottom="20dp"
         android:text="Cal Speed "
         />
     <TextView
         android:id="@+id/tvCalSpeed"
         android:text=":"
-        android:textSize="25dp"
+        android:textSize="20dp"
         />
 
     <TextView
         android:id="@+id/tvTimeLabel"
         android:layout_gravity="right"
-        android:textSize="25dp"
+        android:textSize="20dp"
+        android:layout_marginBottom="20dp"
         android:text="Time "
         />
     <TextView
         android:id="@+id/tvTime"
         android:text=":"
-        android:textSize="25dp"
+        android:textSize="20dp"
         />
 
     <TextView
         android:id="@+id/tvLastTimeLabel"
         android:layout_gravity="right"
-        android:textSize="25dp"
+        android:textSize="20dp"
+        android:layout_marginBottom="20dp"
         android:text="Last Time "
         />
     <TextView
         android:id="@+id/tvLastTime"
         android:text=":"
-        android:textSize="25dp"
+        android:textSize="20dp"
         />
 
     <TextView
         android:id="@+id/tvTimeDifLabel"
         android:layout_gravity="right"
-        android:textSize="25dp"
+        android:textSize="20dp"
+        android:layout_marginBottom="20dp"
         android:text="시간 간격 "
         />
     <TextView
         android:id="@+id/tvTimeDif"
         android:text=":"
-        android:textSize="25dp"
+        android:textSize="20dp"
         />
 
     <TextView
         android:id="@+id/tvDistDifLabel"
         android:layout_gravity="right"
-        android:textSize="25dp"
+        android:textSize="20dp"
+        android:layout_marginBottom="20dp"
         android:text="거리 간격 "
         />
     <TextView
         android:id="@+id/tvDistDif"
         android:text=":"
-        android:textSize="25dp"
+        android:textSize="20dp"
         />
 
+    <TextView
+        android:id="@+id/tvLongitudeLabel"
+        android:layout_gravity="right"
+        android:textSize="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="경도 "
+        />
+    <TextView
+        android:id="@+id/tvLongitude"
+        android:text=":"
+        android:textSize="20dp"
+        />
 
+    <TextView
+        android:id="@+id/tvLatitudeLabel"
+        android:layout_gravity="right"
+        android:textSize="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="위도 "
+        />
+    <TextView
+        android:id="@+id/tvLatitude"
+        android:text=":"
+        android:textSize="20dp"
+        />
+
+    <TextView
+        android:id="@+id/tvAltitudeLabel"
+        android:layout_gravity="right"
+        android:textSize="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="고도 "
+        />
+    <TextView
+        android:id="@+id/tvAltitude"
+        android:text=":"
+        android:textSize="20dp"
+        />
+    <TextView
+        android:id="@+id/tvAccuracyLabel"
+        android:layout_gravity="right"
+        android:textSize="20dp"
+        android:text="오차범위 "
+        />
+    <TextView
+        android:id="@+id/tvAccuracy"
+        android:text=":"
+        android:textSize="20dp"
+        />
 
 </GridLayout>
