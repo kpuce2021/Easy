@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "EasyDashCam"
 include ':app'
+include ':opencv'
