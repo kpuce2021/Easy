@@ -1,0 +1,33 @@
+{
+  "buildFiles": [
+    "/Users/kimdonghyeon/AndroidStudioProjects/OpenCVCamera/opencv/libcxx_helper/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/kimdonghyeon/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja",
+      "-C",
+      "/Users/kimdonghyeon/AndroidStudioProjects/OpenCVCamera/opencv/.cxx/RelWithDebInfo/5l2j4v45/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/kimdonghyeon/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja",
+    "-C",
+    "/Users/kimdonghyeon/AndroidStudioProjects/OpenCVCamera/opencv/.cxx/RelWithDebInfo/5l2j4v45/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "opencv_jni_shared-RelWithDebInfo-x86": {
+      "artifactName": "opencv_jni_shared",
+      "buildCommandComponents": [
+        "/Users/kimdonghyeon/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja",
+        "-C",
+        "/Users/kimdonghyeon/AndroidStudioProjects/OpenCVCamera/opencv/.cxx/RelWithDebInfo/5l2j4v45/x86",
+        "opencv_jni_shared"
+      ],
+      "abi": "x86",
+      "output": "/Users/kimdonghyeon/AndroidStudioProjects/OpenCVCamera/opencv/.cxx/RelWithDebInfo/5l2j4v45/x86/libopencv_jni_shared.a",
+      "runtimeFiles": []
+    }
+  }
+}

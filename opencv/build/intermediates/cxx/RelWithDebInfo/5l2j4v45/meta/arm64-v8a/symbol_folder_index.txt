@@ -1,0 +1,1 @@
+/Users/kimdonghyeon/AndroidStudioProjects/OpenCVCamera/opencv/build/intermediates/cxx/RelWithDebInfo/5l2j4v45/obj/arm64-v8a
