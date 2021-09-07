@@ -59,8 +59,6 @@ public class RetrofitService extends Service {
 
     Context context=this;
 
-
-
     public RetrofitService() {
     } //constructor
 
@@ -72,7 +70,7 @@ public class RetrofitService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         OkHttpClient client = new OkHttpClient.Builder().build();//save code
-        apiService = new Retrofit.Builder().baseUrl("http://ec2-13-124-56-124.ap-northeast-2.compute.amazonaws.com:3001").client(client).build().create(com.example.easydashcam.ServiceApi.class);//save code
+        apiService = new Retrofit.Builder().baseUrl("http://13.209.7.225:80").client(client).build().create(com.example.easydashcam.ServiceApi.class);//save code
         targetPath=intent.getStringExtra("target"); // 전송할 영상이 저장되어 있는 경로 및 파일명 저장
         //추가된 내용 => 충격 감지 하이라이트 추출을 위한 Frame정보가 담겨있는 ArrayList 서버로 전송
 
@@ -86,7 +84,6 @@ public class RetrofitService extends Service {
 
     private void multipartVideoUploads() {
         //전송할 파일의 경로 저장 = mediaPath1
-
 
         File targetFile = new File(targetPath);  // 전송 할 target path
         // 파일전송을 위한 파싱

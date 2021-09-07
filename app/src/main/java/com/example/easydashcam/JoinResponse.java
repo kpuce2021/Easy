@@ -11,7 +11,6 @@ public class JoinResponse {
     private String message;
 
 
-
     public int getCode() {
         return code;
     }

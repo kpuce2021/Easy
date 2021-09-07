@@ -712,9 +712,9 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 // 4. 주행 보조 모드에 따른 영상처리 수행
                 if(driveMode==LANE){
                     count = ConvertImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr(), count);   // 차선 검출 메서드 호출 native-lib 구현
-                    if (count > 12) {   // 18
+                    if (count > 18) {   // 12
                         alarmImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr());  // 이벤트 발생 시점->화면전환
-                        tone.startTone(ToneGenerator.TONE_CDMA_PIP, durationOfAlarm);   //차선 이탈 알림
+                        //tone.startTone(ToneGenerator.TONE_CDMA_PIP, durationOfAlarm);   //차선 이탈 알림
                     }
                 }
                 if(driveMode==DISTANCE){
@@ -743,12 +743,10 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 avrCrash.clear();
                 speedArray.clear();
 
-
                 //3. 서비스 시작
                 Intent intent=new Intent(getApplicationContext(), RetrofitService.class);
                 intent.putExtra("target", pathDir_Recorder);
                 intent.putIntegerArrayListExtra("eventArray", eventFrames); //추출할 이벤트 프레임이 저장되어 있는 ArrayList전달
-
 
                 startService(intent);
 
@@ -921,7 +919,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 double collision_detect = Math.sqrt( Math.pow(z - last_z,2)*100 + Math.pow(x-last_x,2)*10+  Math.pow(y-last_y,2)*10)/ diffTime * 10000;
                 //충격 값 저장 -> 녹화 진행중 프레임당 충격값을 저장
                 curCrash=collision_detect;
-                /*
+
 
                 if (collision_detect > COLLISION_THRESHOLD) {
                     //지정된 수치이상 흔들림이 있으면 실행
@@ -931,7 +929,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
                 }
 
-                 */
+
 
                 //갱신
                 last_x = x;

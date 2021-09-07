@@ -1,5 +1,7 @@
 package com.example.easydashcam;
 
+import java.util.ArrayList;
+
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -11,6 +13,9 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Streaming;
 import retrofit2.http.Url;
+
+
+
 
 public interface ServiceApi {
 
@@ -25,10 +30,22 @@ public interface ServiceApi {
     @POST("/upload")
     Call<ResponseBody> postVideo(@Part MultipartBody.Part video, @Part("upload") RequestBody name );
 
-
     //added
     @Streaming
     @GET
     Call<ResponseBody> downloadFileByUrl(@Url String fileUrl);
+
+    @POST("/accessDB")
+    Call<ArrayList<TableResponse>> accessSeverDB();
+
+
+
+
+
+
+
+
+
+
 
 }

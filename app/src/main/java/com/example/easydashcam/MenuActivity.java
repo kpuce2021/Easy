@@ -60,7 +60,7 @@ public class MenuActivity extends AppCompatActivity {
 
         intent_camera=new Intent(this, MainActivity.class);
         intent_gall=new Intent(this, VideoActivity.class);
-        intent_download=new Intent(this, DownloadService.class);
+        intent_download=new Intent(this, DownloadActivity.class);
 
         btn_camera=(Button)findViewById(R.id.btn_camera);
         btn_camera.setOnClickListener(new Button.OnClickListener(){
@@ -79,8 +79,9 @@ public class MenuActivity extends AppCompatActivity {
         btn_download=(Button)findViewById(R.id.btn_download);
         btn_download.setOnClickListener(new Button.OnClickListener(){
             public void onClick(View v){
-                intent_download.putExtra("numberOfVideo", 2);
-                startService(intent_download);
+
+                //intent_download.putExtra("numberOfVideo", 2);
+                startActivity(intent_download);
             }   //저장된 영상이 있는 VideoActivity로 이동
         });
 

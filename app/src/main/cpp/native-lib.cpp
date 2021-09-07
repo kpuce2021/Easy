@@ -183,8 +183,7 @@ Java_com_example_easydashcam_MainActivity_detect(JNIEnv *env, jobject thiz,
 
     cvtColor(detectFrame, detectFrame, COLOR_BGR2GRAY);
 
-
-
+    
     std::vector<Rect> cars;     //검출된 차량의 정보를 저장할 벡터 자료형
     //((CascadeClassifier *) cascade_classifier_car)->detectMultiScale( img_resize, cars, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
     //((CascadeClassifier *) cascade_classifier_car)->detectMultiScale(img_input, cars);  // 차량 검출 수행 -> 결과 cars벡터에 저장
