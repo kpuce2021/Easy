@@ -39,13 +39,7 @@ public interface ServiceApi {
     Call<ArrayList<TableResponse>> accessSeverDB();
 
 
-
-
-
-
-
-
-
-
+    @POST("/CrashEvent")
+    Call<ResponseBody> uploadCrashEvent(@Body UploadData body);
 
 }

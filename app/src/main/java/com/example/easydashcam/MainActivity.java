@@ -151,10 +151,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private int driveMode = DEFAULT;
 
     //variable test crash
-    private ArrayList<Double> avrCrash = new ArrayList<Double>(); // 모든 충격 값을 저장할 배열
     private ArrayList<Integer> eventFrames; // 추출해야할 이벤트 Frame을 저장할 배열
-    private double curCrash = 0.0;
-
 
     //variable gradient&intercept
     private double gradientLeft = 0;  // 0 -> init 수행 (onCameraFrame메서드내 findGradient 호출)
@@ -192,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private Sensor senAccelerometer;
     private long lastUpdate = 0;
     private float last_x, last_y, last_z;
-    private int COLLISION_THRESHOLD = 2000;   //충돌임계값 -> 값이 낮을 수록 작은 충돌에도 이벤트 발생
+    private int COLLISION_THRESHOLD = 2500;   //충돌임계값 -> 값이 낮을 수록 작은 충돌에도 이벤트 발생
 
 
     //variable RingThone
@@ -588,25 +585,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
     //=============================================================================================================
 
-    /*
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                {
-                    mOpenCvCameraView.enableView();
-                } break;
-                default:
-                {
-                    super.onManagerConnected(status);
-                } break;
-            }
-        }
-    };
-
-     */
-    //=============================================================================================================
 
     public String getTime() {    //현재 시간을 문자열로 리턴하는 메서드
         String current = null;
@@ -668,6 +646,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             //===============//===============//===============//===============//===============//===============//===============//===============
             if (recordController == INIT) {
 
+                eventFrames=new ArrayList<Integer>();
+
                 speedArray=new ArrayList<Integer>();
 
                 sensorManager.registerListener(MainActivity.this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -676,9 +656,9 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 int h=matInput.rows();
                 time=getTime();
                 baseDir_Recorder = Environment.getExternalStorageDirectory().getPath();   // 기본 저장 경로
-                pathDir_Recorder = baseDir_Recorder + File.separator+"/녹화영상/"+getTime()+".avi";
+                pathDir_Recorder = baseDir_Recorder + File.separator+"/녹화영상/"+time+".avi";
                 //information of VideoFile
-                info_path=baseDir_Recorder + File.separator+"/녹화정보/"+getTime()+".txt";
+                info_path=baseDir_Recorder + File.separator+"/녹화정보/"+time+".txt";
 
                 address_startingPoint=getCurrentAddress(newLat, newLng);    // 녹화 시작시 시작 주소에 해당
 
@@ -692,6 +672,9 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             }
             //===============//===============//===============//===============//===============//===============//===============//===============
             if(recordController==PROGRESS){ //frame카운트 고려 할것 - > 이벤트 위함
+
+                frame_count++;
+
                 if (matResult == null) {
                     matResult = new Mat(matInput.rows(), matInput.cols(), matInput.type()); // 연산 최소화를 위한 영역 지정
                 }
@@ -706,7 +689,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 videoWriter.write(matInput); // video writer 수행
 
                 // 3. 충격 정보 수집 & 속도 정보 수집
-                avrCrash.add(curCrash); // 충격의 평균값을 도출 하기 위해 -> 프레임당 현재 충격정도를 저장
                 speedArray.add(speed_location); //현재 프레임의 속도값 ArrayList에 저장
 
                 // 4. 주행 보조 모드에 따른 영상처리 수행
@@ -729,6 +711,9 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 // 재시작 순서 1.카메라 릴리즈 2.VideoInfo 구성 및 저장 3.서비스 시작 4.Controller 상태 변경
                 // 5. 가속도 센서 unregister
 
+                frame_count=0;
+
+
                 // 1.카메라 릴리즈
                 videoWriter.release();
                 videoWriter=null;
@@ -737,15 +722,14 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 arr_videoInfo.clear();  //arrayVideoInfo 비우기
                 address_destination=getCurrentAddress(newLat, newLng);  // 도착지 주소 찾기
                 //더 구성해야할 정보 존재 ex) 충돌 횟수/ 속도 등
-                eventFrames=findEventFrame(avrCrash);    //event발생 프레임을 저장하고 있는 배열 반환 메서드
                 arr_videoInfo.add(new Videos(info_path, address_startingPoint, address_destination, Integer.toString(findAverageSpeed(speedArray)), Integer.toString(eventFrames.size()))); //정보 구성하기
                 updateInfo(arr_videoInfo);  //정보 저장 메서드 호출
-                avrCrash.clear();
                 speedArray.clear();
 
                 //3. 서비스 시작
                 Intent intent=new Intent(getApplicationContext(), RetrofitService.class);
-                intent.putExtra("target", pathDir_Recorder);
+                //intent.putExtra("target", pathDir_Recorder);
+                intent.putExtra("target", time);
                 intent.putIntegerArrayListExtra("eventArray", eventFrames); //추출할 이벤트 프레임이 저장되어 있는 ArrayList전달
 
                 startService(intent);
@@ -769,10 +753,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 arr_videoInfo.clear();  //arrayVideoInfo 비우기
                 address_destination=getCurrentAddress(newLat, newLng);  // 도착지 주소 찾기
                 //더 구성해야할 정보 존재 ex) 충돌 횟수/ 속도 등
-                eventFrames=findEventFrame(avrCrash);    //event발생 프레임을 저장하고 있는 배열 반환 메서드
                 arr_videoInfo.add(new Videos(info_path, address_startingPoint, address_destination, Integer.toString(findAverageSpeed(speedArray)), Integer.toString(eventFrames.size()))); //정보 구성하기
                 updateInfo(arr_videoInfo);  //정보 저장 메서드 호출
-                avrCrash.clear();
                 speedArray.clear();
 
                 //3. 타이머 끄기
@@ -918,12 +900,11 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 //충돌값 계산
                 double collision_detect = Math.sqrt( Math.pow(z - last_z,2)*100 + Math.pow(x-last_x,2)*10+  Math.pow(y-last_y,2)*10)/ diffTime * 10000;
                 //충격 값 저장 -> 녹화 진행중 프레임당 충격값을 저장
-                curCrash=collision_detect;
-
 
                 if (collision_detect > COLLISION_THRESHOLD) {
                     //지정된 수치이상 흔들림이 있으면 실행
                     //tone.startTone(ToneGenerator.TONE_CDMA_PIP, durationOfAlarm);   //check 주석삭제
+                    eventFrames.add(frame_count);   //0909
                     info_crash++; // save?? code
                 } else {
 

@@ -20,6 +20,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /*
 Source
@@ -70,13 +71,31 @@ public class RetrofitService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         OkHttpClient client = new OkHttpClient.Builder().build();//save code
-        apiService = new Retrofit.Builder().baseUrl("http://13.209.7.225:80").client(client).build().create(com.example.easydashcam.ServiceApi.class);//save code
-        targetPath=intent.getStringExtra("target"); // 전송할 영상이 저장되어 있는 경로 및 파일명 저장
+        apiService = new Retrofit.Builder().baseUrl("http://13.209.7.225:80").addConverterFactory(GsonConverterFactory.create()).client(client).build().create(com.example.easydashcam.ServiceApi.class);//save code
+
+
+        String videoTitle=intent.getStringExtra("target");
+        targetPath=Environment.getExternalStorageDirectory().getPath()+File.separator+"/녹화영상/"+videoTitle+".avi";
+
+
+        //targetPath=intent.getStringExtra("target"); // 전송할 영상이 저장되어 있는 경로 및 파일명 저장
         //추가된 내용 => 충격 감지 하이라이트 추출을 위한 Frame정보가 담겨있는 ArrayList 서버로 전송
 
-        eventArray=intent.getIntegerArrayListExtra("eventArray");
+        multipartVideoUploads();    //녹화된 video server로 upload method 호출
 
-        multipartVideoUploads();
+        eventArray=intent.getIntegerArrayListExtra("eventArray");
+        Call<ResponseBody> call=apiService.uploadCrashEvent(new UploadData(videoTitle, eventArray));
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.e("UPLOAD COMPLETE", response.body().toString());
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("UPLOAD FAIL!!", "CRASH EVENT ARRAY!!");
+            }
+        });
 
         return super.onStartCommand(intent, flags, startId);
     }
