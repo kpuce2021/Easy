@@ -923,7 +923,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
                 if (collision_detect > COLLISION_THRESHOLD) {
                     //지정된 수치이상 흔들림이 있으면 실행
-                    tone.startTone(ToneGenerator.TONE_CDMA_PIP, durationOfAlarm);   //check 주석삭제
+                    //tone.startTone(ToneGenerator.TONE_CDMA_PIP, durationOfAlarm);   //check 주석삭제
                     info_crash++; // save?? code
                 } else {
 

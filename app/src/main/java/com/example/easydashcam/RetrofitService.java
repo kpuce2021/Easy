@@ -102,20 +102,13 @@ public class RetrofitService extends Service {
                 if (response.code() == 200) {   //
 
                     Log.d("CALL_DOWNLOAD", "CALL_DOWNLOAD !!!!!!!!!!!");
-                    Intent downloadIntent=new Intent(context, DownloadService.class);
-                    //downloadIntent.putExtra("numberOfVideo", downloadParam);  //save
-                    downloadIntent.putExtra("numberOfVideo", 2);    //delete
-                    startService(downloadIntent);
                     Toast.makeText(getApplicationContext(),"Uploaded Successfully!",Toast.LENGTH_SHORT).show();
                     onDestroy();    // 모든 수행이끝난 후 onDestroy 요청코드를 받을 수 있다면 요청코드 받은후에 onDestroy 수행
 
                 }else{
                     Toast.makeText(getApplicationContext(),"check request",Toast.LENGTH_SHORT).show();
                     Log.d("CALL_DOWNLOAD", "CALL_DOWNLOAD !!!!!!!!!!!");
-                    Intent downloadIntent=new Intent(context, DownloadService.class);
-                    //downloadIntent.putExtra("numberOfVideo", downloadParam);  //save
-                    downloadIntent.putExtra("numberOfVideo", response.code());      //delete
-                    startService(downloadIntent);
+
                     Toast.makeText(getApplicationContext(),"upload fail!",Toast.LENGTH_SHORT).show();
                     onDestroy();    // 모든 수행이끝난 후 onDestroy 요청코드를 받을 수 있다면 요청코드 받은후에 onDestroy 수행
                 }
