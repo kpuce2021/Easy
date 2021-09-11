@@ -71,7 +71,7 @@ public class RetrofitService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         OkHttpClient client = new OkHttpClient.Builder().build();//save code
-        apiService = new Retrofit.Builder().baseUrl("http://13.209.7.225:80").addConverterFactory(GsonConverterFactory.create()).client(client).build().create(com.example.easydashcam.ServiceApi.class);//save code
+        apiService = new Retrofit.Builder().baseUrl("http://ec2-13-124-56-124.ap-northeast-2.compute.amazonaws.com:3001").addConverterFactory(GsonConverterFactory.create()).client(client).build().create(com.example.easydashcam.ServiceApi.class);//save code
 
 
         String videoTitle=intent.getStringExtra("target");

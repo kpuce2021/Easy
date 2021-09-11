@@ -165,6 +165,60 @@ Java_com_example_easydashcam_MainActivity_detectCar(JNIEnv *env, jobject thiz,
                                                     jlong mat_addr_input, jdouble gradient_left,
                                                     jdouble intercept_left, jdouble gradient_right,
                                                     jdouble intercept_right) {
+    Mat &img_input = *(Mat *) mat_addr_input;   //input frame
+    Mat detectFrame=img_input(Rect(3*img_input.cols/10, 0, 4*img_input.cols/10, img_input.rows));   // detect를 위한 관심 영역지정
+
+    int size=0;
+    bool flag=false;
+    int tmpIndex;
+    int resIndex=0;
+    Mat temp=img_input;
+    Mat detectTemp=detectFrame;
+    double threshold=2.0;
+
+    cvtColor(detectFrame, detectFrame, COLOR_BGR2GRAY);
+    std::vector<Rect> cars;     //검출된 차량의 정보를 저장할 벡터 자료형
+
+
+    int standard=temp.cols/2;  // 기준 해당 위치에 가장 가까운 객체를 트래킹 하도록 설정
+    ((CascadeClassifier *) cascade_classifier_car)->detectMultiScale(detectFrame, cars);  // 차량 검출 수행 -> 결과 cars벡터에 저장
+
+    if(cars.empty()){
+        cout<<"fail to find cars"<<endl;
+        //checkPoint2
+    }else{
+
+        for(int i=1; i<cars.size(); i++){
+            tmpIndex=i;
+            if(abs(standard-cars[resIndex].x+cars[resIndex].width/2)>abs(standard-cars[tmpIndex].x+cars[tmpIndex].width/2)){
+                resIndex=tmpIndex;
+            }
+        }
+        cars[resIndex].x=cars[resIndex].x+3*temp.cols/10;   //찾은 차량의 좌표x 좌표 화면 detectFrame-> 전체 화면 Frame상의 위치
+        rectangle(img_input ,cars[resIndex], Scalar(255,0,255),2);
+
+        /*
+          size=cars[resIndex].width*cars[resIndex].height;
+        if(size>40000){
+            cvtColor(img_input, img_input, COLOR_BGR2HLS);
+        }
+         */
+        double frameSize=img_input.cols*img_input.rows; //전체 화면 넓이
+        double carSize=cars[resIndex].width*cars[resIndex].height;  //찾은 차량의 rect넓이
+        double distanceRate=carSize/frameSize*100;  // 찾은 차량의 Rect가 전체 화면에서 차지하는 비율
+
+        //detection 된 차량의 정중앙 x,y 좌표
+        int location_x=cars[resIndex].x+cars[resIndex].width/2;
+        int location_y=cars[resIndex].y+cars[resIndex].height/2;
+
+        if(distanceRate>threshold&&(location_y-intercept_left)/gradient_left<location_x&&location_x<(location_y-intercept_right)/gradient_right){ //차량의 비율이 threshold(2.0=30m)보다 클 경우 true return
+            flag=true;
+            //cvtColor(img_input, img_input, COLOR_BGR2HLS);
+        }
+
+    }
+
+    return flag;
 
 
 
@@ -176,6 +230,7 @@ JNIEXPORT void JNICALL
 Java_com_example_easydashcam_MainActivity_detect(JNIEnv *env, jobject thiz,
                                                  jlong cascade_classifier_car, jlong mat_addr_input,
                                                  jlong mat_addr_result) {
+
     Mat &img_input = *(Mat *) mat_addr_input;   //input frame
     Mat &img_result = *(Mat *) mat_addr_result; //output frame
     Mat detectFrame=img_input(Rect(3*img_input.cols/10, 0, 4*img_input.cols/10, img_input.rows));
@@ -207,7 +262,7 @@ Java_com_example_easydashcam_MainActivity_detect(JNIEnv *env, jobject thiz,
         }
     }
     cars[resIndex].x=cars[resIndex].x+3*temp.cols/10;
-    //rectangle(img_input ,cars[resIndex], Scalar(255,0,255),2);
+    rectangle(img_input ,cars[resIndex], Scalar(255,0,255),2);
 
     size=cars[resIndex].width*cars[resIndex].height;
     if(size>40000){

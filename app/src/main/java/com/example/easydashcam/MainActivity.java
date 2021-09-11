@@ -700,10 +700,16 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                     }
                 }
                 if(driveMode==DISTANCE){
+
+//                    detect(cascadeClassifier_car, matInput.getNativeObjAddr(), matResult.getNativeObjAddr());
+
                     //차량 거리 측정 수행결과 true -> native code(화면색상변경) / activity(소리 알림)
+
                     if(detectCar(cascadeClassifier_car, matInput.getNativeObjAddr(), gradientLeft, interceptLeft, gradientRight, interceptRight)){
-                        tone.startTone(ToneGenerator.TONE_CDMA_PIP, durationOfAlarm);   //차선 이탈 알림
+                        //tone.startTone(ToneGenerator.TONE_CDMA_PIP, durationOfAlarm);   //차선 이탈 알림
+                        alarmImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr());  // 이벤트 발생 시점->화면전환
                     }
+
                 }
             }
             //===============//===============//===============//===============//===============//===============//===============//===============
