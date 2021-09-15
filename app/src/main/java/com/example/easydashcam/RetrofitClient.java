@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
 
     //https 통신시 handshake 오류 발생 >> http통신으로 변경
-    private final static String BASE_URL = "http://ec2-13-124-56-124.ap-northeast-2.compute.amazonaws.com:3001";  // aws ip
+    private final static String BASE_URL = "http://13.124.56.124:3001";  // aws ip
     private static Retrofit retrofit = null;
 
     private RetrofitClient(){

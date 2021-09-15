@@ -71,12 +71,11 @@ public class RetrofitService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         OkHttpClient client = new OkHttpClient.Builder().build();//save code
-        apiService = new Retrofit.Builder().baseUrl("http://ec2-13-124-56-124.ap-northeast-2.compute.amazonaws.com:3001").addConverterFactory(GsonConverterFactory.create()).client(client).build().create(com.example.easydashcam.ServiceApi.class);//save code
+        apiService = new Retrofit.Builder().baseUrl("http://13.124.56.124:3001").addConverterFactory(GsonConverterFactory.create()).client(client).build().create(com.example.easydashcam.ServiceApi.class);//save code
 
 
         String videoTitle=intent.getStringExtra("target");
-        targetPath=Environment.getExternalStorageDirectory().getPath()+File.separator+"/녹화영상/"+videoTitle+".avi";
-
+        targetPath=Environment.getExternalStorageDirectory().getPath()+"/녹화영상/"+videoTitle+".avi";
 
         //targetPath=intent.getStringExtra("target"); // 전송할 영상이 저장되어 있는 경로 및 파일명 저장
         //추가된 내용 => 충격 감지 하이라이트 추출을 위한 Frame정보가 담겨있는 ArrayList 서버로 전송

@@ -646,6 +646,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             //===============//===============//===============//===============//===============//===============//===============//===============
             if (recordController == INIT) {
 
+                frame_count=0;
                 eventFrames=new ArrayList<Integer>();
 
                 speedArray=new ArrayList<Integer>();
@@ -767,14 +768,12 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 timer.cancel();
 
                 //4. 서비스 시작
-                /*
-
                 Intent intent=new Intent(getApplicationContext(), RetrofitService.class);
-                intent.putExtra("target", pathDir_Recorder);
+                intent.putExtra("target", time);
                 intent.putIntegerArrayListExtra("eventArray", eventFrames); //추출할 이벤트 프레임이 저장되어 있는 ArrayList전달
 
                 startService(intent);
-                 */
+
                 // 5.Controller 상태 변경
                 recordController=OFF;
 
