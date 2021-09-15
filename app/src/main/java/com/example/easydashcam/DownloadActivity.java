@@ -57,16 +57,16 @@ public class DownloadActivity extends AppCompatActivity {
 
 
     class DownloadHolder extends RecyclerView.ViewHolder{
-        private TextView textView;
+        private Button btn_item;
         public DownloadHolder(@NonNull View itemView) {
             super(itemView);
-            textView=itemView.findViewById(R.id.text_download_item);
-            textView.setOnClickListener(new View.OnClickListener(){
+            btn_item=itemView.findViewById(R.id.btn_download_item);
+            btn_item.setOnClickListener(new View.OnClickListener(){
 
                 @Override
                 public void onClick(View view) {
                     Intent intent=new Intent(downloadContext, DownloadService.class);
-                    intent.putExtra("fileName", textView.getText());
+                    intent.putExtra("fileName", btn_item.getText());
                     startService(intent);
 
                 }
@@ -74,7 +74,7 @@ public class DownloadActivity extends AppCompatActivity {
         }
 
         public void bind(TableResponse tableResponse){
-            textView.setText(tableResponse.getTitle());
+            btn_item.setText(tableResponse.getTitle());
         }
 
     }

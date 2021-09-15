@@ -19,7 +19,7 @@ public class DownloadViewModel extends ViewModel {
     private Retrofit retrofit;
 
     public void accessDB(){
-        api = new Retrofit.Builder().baseUrl("http://13.209.7.225:80").addConverterFactory(GsonConverterFactory.create()).build().create(com.example.easydashcam.ServiceApi.class);//save code
+        api = new Retrofit.Builder().baseUrl("http://13.124.56.124:3001").addConverterFactory(GsonConverterFactory.create()).build().create(com.example.easydashcam.ServiceApi.class);//save code
         Call<ArrayList<TableResponse>> call = api.accessSeverDB();
 
         call.enqueue(new Callback<ArrayList<TableResponse>>() {
@@ -35,12 +35,6 @@ public class DownloadViewModel extends ViewModel {
             }
         });
 
-
     }
-
-
-
-
-
 
 }

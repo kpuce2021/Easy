@@ -55,12 +55,13 @@ public class DownloadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         String fileName = intent.getStringExtra("fileName");
         Log.e("DOWNLOADSERVICE", fileName.toString());
-        String serverUrl = "originalVideos/" + fileName; //서버에서 가져올 파일의 서버 경로
+        String serverUrl = "ExtractedVideo/" + fileName; //서버에서 가져올 파일의 서버 경로
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://13.209.7.225:80")
+                .baseUrl("http://13.124.56.124:3001")
                 .client(new OkHttpClient.Builder().build())
                 .build();
 
@@ -73,12 +74,15 @@ public class DownloadService extends Service {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.e("DOWNLOAD", "onResponse Called");
-                new Thread() {
-                    @Override
-                    public void run() {
-                        saveToDisk(response.body(), fileName);
-                    }
-                }.start();
+
+                if(response.isSuccessful()){
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            saveToDisk(response.body(), fileName);
+                        }
+                    }.start();
+                }
 
             }
 

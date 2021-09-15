@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     //variable Date
     private long now;
     private Date date;
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"); //햔재 날짜, 시간 포맷 설정
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss"); //햔재 날짜, 시간 포맷 설정
     private String time;    // 녹화 시작 시점의 시간을 저장하기위한 변수
 
     static {
@@ -655,7 +655,9 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 findGradient(matInput, gradientLeft, interceptLeft, gradientRight, interceptRight); //선을 기울기를 찾기 위한 메서드 호출
                 int w=matInput.cols();
                 int h=matInput.rows();
-                time=getTime();
+
+                time=getTime(); // save
+
                 baseDir_Recorder = Environment.getExternalStorageDirectory().getPath();   // 기본 저장 경로
                 pathDir_Recorder = baseDir_Recorder + File.separator+"/녹화영상/"+time+".avi";
                 //information of VideoFile
@@ -695,9 +697,9 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 // 4. 주행 보조 모드에 따른 영상처리 수행
                 if(driveMode==LANE){
                     count = ConvertImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr(), count);   // 차선 검출 메서드 호출 native-lib 구현
-                    if (count > 18) {   // 12
+                    if (count > 25 && speed_location>50) {   // 12
                         alarmImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr());  // 이벤트 발생 시점->화면전환
-                        //tone.startTone(ToneGenerator.TONE_CDMA_PIP, durationOfAlarm);   //차선 이탈 알림
+                        tone.startTone(ToneGenerator.TONE_CDMA_PIP, durationOfAlarm);   //차선 이탈 알림
                     }
                 }
                 if(driveMode==DISTANCE){
@@ -706,8 +708,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
                     //차량 거리 측정 수행결과 true -> native code(화면색상변경) / activity(소리 알림)
 
-                    if(detectCar(cascadeClassifier_car, matInput.getNativeObjAddr(), gradientLeft, interceptLeft, gradientRight, interceptRight)){
-                        //tone.startTone(ToneGenerator.TONE_CDMA_PIP, durationOfAlarm);   //차선 이탈 알림
+                    if(speed_location>30&&detectCar(cascadeClassifier_car, matInput.getNativeObjAddr(), gradientLeft, interceptLeft, gradientRight, interceptRight)){
+                        tone.startTone(ToneGenerator.TONE_CDMA_PIP, durationOfAlarm);   //차선 이탈 알림
                         alarmImage(matInput.getNativeObjAddr(), matResult.getNativeObjAddr());  // 이벤트 발생 시점->화면전환
                     }
 
@@ -908,15 +910,12 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
                 if (collision_detect > COLLISION_THRESHOLD) {
                     //지정된 수치이상 흔들림이 있으면 실행
-                    //tone.startTone(ToneGenerator.TONE_CDMA_PIP, durationOfAlarm);   //check 주석삭제
+                    tone.startTone(ToneGenerator.TONE_CDMA_PIP, durationOfAlarm);   //check 주석삭제
                     eventFrames.add(frame_count);   //0909
                     info_crash++; // save?? code
                 } else {
 
                 }
-
-
-
                 //갱신
                 last_x = x;
                 last_y = y;

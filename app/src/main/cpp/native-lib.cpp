@@ -197,7 +197,7 @@ Java_com_example_easydashcam_MainActivity_detectCar(JNIEnv *env, jobject thiz,
             }
         }
         cars[resIndex].x=cars[resIndex].x+3*temp.cols/10;   //찾은 차량의 좌표x 좌표 화면 detectFrame-> 전체 화면 Frame상의 위치
-        rectangle(img_input ,cars[resIndex], Scalar(255,0,255),2);
+       // rectangle(img_input ,cars[resIndex], Scalar(255,0,255),2); //save
 
         /*
           size=cars[resIndex].width*cars[resIndex].height;
