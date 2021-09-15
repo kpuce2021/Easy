@@ -1,21 +1,29 @@
 package com.example.easydashcam;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 
+import kotlin.coroutines.CoroutineContext;
 import kotlinx.coroutines.CoroutineScope;
 import kotlinx.coroutines.Dispatchers;
 import okhttp3.Dispatcher;
@@ -37,6 +45,11 @@ import retrofit2.Retrofit;
 public class DownloadService extends Service {
 
     String highlitePath = Environment.getExternalStorageDirectory().getPath() + File.separator + "/하이라이트";
+
+    Context serviceContext=this;
+    Handler handler=new Handler();
+
+
 
 
     public DownloadService() {
@@ -80,10 +93,19 @@ public class DownloadService extends Service {
                         @Override
                         public void run() {
                             saveToDisk(response.body(), fileName);
+
+
+
+
+
+
+
+
+
+
                         }
                     }.start();
                 }
-
             }
 
             @Override
@@ -124,6 +146,14 @@ public class DownloadService extends Service {
                 }
                 outputStream.flush();
 
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(serviceContext, "success", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 return;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -139,8 +169,9 @@ public class DownloadService extends Service {
 
             return;
         }
-
     }
+
+
 
 
 }
